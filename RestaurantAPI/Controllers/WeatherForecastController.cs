@@ -21,10 +21,13 @@ namespace RestaurantAPI.Controllers
             _forecastService = forecastService;
         }
 
-        [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpPost]
+        [Route("generate")]
+        public string Get([FromQuery]int returnedResultNumber, [FromBody]string minTempValue)
         {
-            return _forecastService.Get();
+            return "hello";
+            //return _forecastService.Get();
         }
+
     }
 }
