@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace RestaurantAPI.Controllers
@@ -23,32 +24,12 @@ namespace RestaurantAPI.Controllers
 
         [HttpPost]
         [Route("generate")]
-        public string Get([FromQuery]int returnedResultNumber, [FromBody]string minTempValue)
+        public ActionResult<IEnumerable<WeatherForecast>> Get([FromQuery]int returnedResultNumber, [FromBody]TempRange tempValueRange)
         {
-            return "hello";
-            //return _forecastService.Get();
-        }
+            if (returnedResultNumber <= 0 || tempValueRange.MinValue >= tempValueRange.MaxValue)
+                return BadRequest();
 
-        [HttpGet("CurrentDay/{max}")]
-        //[Route("CurrentDay")]
-        public IEnumerable<WeatherForecast> Get2([FromQuery] int take, [FromRoute] int max)
-        {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
-        }
-        [HttpPost]
-        public ActionResult<string> Hello([FromBody] string name)
-        {
-            //HttpContext.Response.StatusCode = 404 ;
-            //return StatusCode(401, $"Hello {name}");
-
-            return NotFound($"Hello {name}");
-        } 
+            return Ok(_forecastService.Get(returnedResultNumber, tempValueRange.MinValue, tempValueRange.MaxValue));
+        }       
     }
 }
