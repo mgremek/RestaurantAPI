@@ -27,6 +27,7 @@ namespace RestaurantAPI
         {
 
             services.AddControllers();
+            services.AddTransient<IWeatherForecastService, WeatherForecastService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
