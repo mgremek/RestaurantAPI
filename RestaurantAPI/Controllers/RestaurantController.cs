@@ -21,6 +21,21 @@ namespace RestaurantAPI.Controllers
             _restaurantDbContext = restaurantDBContext;
             _mapper = mapper;
         }
+
+        [HttpPost]
+        public ActionResult CreateRestaurant([FromBody] CreateRestaurantDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var restaurant = _mapper.Map<Restaurant>(dto);
+
+            _restaurantDbContext.Restaurants.Add(restaurant);
+            _restaurantDbContext.SaveChanges();
+
+            return Created($"/api/restaurant/{restaurant.Id}", null);
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<Restaurant>> GetAll()
         {
@@ -45,7 +60,6 @@ namespace RestaurantAPI.Controllers
                 return NotFound();
 
             return Ok(_mapper.Map<RestaurantDTO>(restaurant));
-        }
-       
+        }   
     }
 }
