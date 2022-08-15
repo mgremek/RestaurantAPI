@@ -18,8 +18,13 @@ namespace RestaurantAPI.Controllers
 
         public RestaurantController(RestaurantDbContext restaurantDBContext, IMapper mapper, IRestaurantService restaurantService)
         {
-
             _restaurantService = restaurantService;
+        }
+
+        [HttpDelete("{restaurantId}")]
+        public ActionResult DeleteRestaurant([FromRoute]int restaurantId)
+        {
+            return _restaurantService.Delete(restaurantId) ? NoContent() : NotFound();
         }
 
         [HttpPost]
@@ -32,10 +37,10 @@ namespace RestaurantAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Restaurant>> GetAll() => Ok(_restaurantService.GetAll());
+        public ActionResult<IEnumerable<Restaurant>> GetAllRestaurants() => Ok(_restaurantService.GetAll());
 
         [HttpGet("{restaurantId}")]
-        public ActionResult<Restaurant> Get([FromRoute]int restaurantId)
+        public ActionResult<Restaurant> GetRestaurantById([FromRoute]int restaurantId)
         {
             var restaurant =_restaurantService.GetById(restaurantId);
 
