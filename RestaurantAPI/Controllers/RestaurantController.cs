@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace RestaurantAPI.Controllers
 {
     [Route("api/restaurant")]
+    [ApiController]
     public class RestaurantController : ControllerBase
     { 
         private readonly IRestaurantService _restaurantService;
@@ -24,29 +25,22 @@ namespace RestaurantAPI.Controllers
         [HttpDelete("{restaurantId}")]
         public ActionResult DeleteRestaurant([FromRoute]int restaurantId)
         {
-            return _restaurantService.Delete(restaurantId) ? NoContent() : NotFound();
+            _restaurantService.Delete(restaurantId);
+            
+            return NoContent();
         }
 
         [HttpPut("{restaurantId}")]
         public ActionResult ModifyRestaurant([FromRoute] int restaurantId, [FromBody] CreateRestaurantDTO dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            _restaurantService.Modify(restaurantId, dto);
 
-            if (_restaurantService.Modify(restaurantId, dto))
-                return Ok();
-            else
-                return NotFound();
+            return Ok();        
         }
         [HttpPost]
         public ActionResult CreateRestaurant([FromBody] CreateRestaurantDTO dto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Created($"/api/restaurant/{_restaurantService.CreateNew(dto)}", null);
-        }
-
+            => Created($"/api/restaurant/{_restaurantService.CreateNew(dto)}", null);
+ 
         [HttpGet]
         public ActionResult<IEnumerable<Restaurant>> GetAllRestaurants() => Ok(_restaurantService.GetAll());
 
@@ -55,10 +49,7 @@ namespace RestaurantAPI.Controllers
         {
             var restaurant =_restaurantService.GetById(restaurantId);
 
-            if (restaurant is null)
-                return NotFound();
-            else
-                return Ok(restaurant);
+            return Ok(restaurant);
         }   
     }
 }

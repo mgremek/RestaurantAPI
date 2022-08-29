@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RestaurantAPI.Entities;
+using RestaurantAPI.Exceptions;
 using RestaurantAPI.Models;
 using System;
 using System.Collections.Generic;
@@ -15,8 +16,8 @@ namespace RestaurantAPI.Services
         public RestaurantDTO GetById(int id);
         public IEnumerable<RestaurantDTO> GetAll();
         public int CreateNew(CreateRestaurantDTO createRest);
-        bool Delete(int id);
-        bool Modify(int id, CreateRestaurantDTO dto);
+        void Delete(int id);
+        void Modify(int id, CreateRestaurantDTO dto);
     }
     public class RestaurantService : IRestaurantService
     {
@@ -39,8 +40,9 @@ namespace RestaurantAPI.Services
                .Include(r => r.Dishes)
                .FirstOrDefault(x => x.Id == id);
 
-            if (restaurant is null) 
-                return null;
+            if (restaurant is null)
+                throw new NotFoundException("Restaurant not found");
+
             else
                 return _mapper.Map<RestaurantDTO>(restaurant);
         }
@@ -64,26 +66,25 @@ namespace RestaurantAPI.Services
             return restaurant.Id;
         }
 
-        public bool Delete(int id)
+        public void Delete(int id)
         {
             _logger.LogError($"Restaurant with id: {id} DELETE action invoked.");
 
             var res = _dbContext.Restaurants.FirstOrDefault(x => x.Id == id);
 
             if (res is null)
-                return false;
+                throw new NotFoundException("Restaurant not found");
 
             _dbContext.Restaurants.Remove(res);
             _dbContext.SaveChanges();
-            return true;
         }
 
-        public bool Modify(int id, CreateRestaurantDTO dto)
+        public void Modify(int id, CreateRestaurantDTO dto)
         {
             var res = _dbContext.Restaurants.FirstOrDefault(x => x.Id == id);
 
             if (res is null)
-                return false;
+                throw new NotFoundException("Restaurant not found");
 
             res.Name = dto.Name is null ? res.Name : dto.Name;
             res.Description = dto.Description is null ? res.Description : dto.Description;
@@ -91,7 +92,6 @@ namespace RestaurantAPI.Services
 
             _dbContext.SaveChanges();
 
-            return true;
         }
     }
 }
