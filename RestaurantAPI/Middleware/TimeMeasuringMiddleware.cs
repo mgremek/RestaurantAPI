@@ -23,7 +23,7 @@ namespace RestaurantAPI.Middleware
             await next.Invoke(context);
             stopwatch.Stop();
 
-            if(stopwatch.ElapsedMilliseconds < _maxMilisecs)
+            if(stopwatch.ElapsedMilliseconds > _maxMilisecs)
             {
                 var mssg = $"Request [{context.Request.Method}] at {context.Request.Path}: elapsed {stopwatch.ElapsedMilliseconds.ToString()} ms";
                 _logger.LogInformation(mssg);
