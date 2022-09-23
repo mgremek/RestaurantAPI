@@ -16,6 +16,8 @@ namespace RestaurantAPI.Services
         DishDTO GetDish(int restaurantId, int dishId);
 
         IEnumerable<DishDTO> GetAllDishes(int restaurantId);
+        void DeleteAll(int restaurantId);
+        void DeleteDishById(int restaurantId, int dishId);
     }
 
     public class DishService : IDishService
@@ -46,13 +48,7 @@ namespace RestaurantAPI.Services
 
         public DishDTO GetDish(int restaurantId, int dishId)
         {
-            var restaurant = _dbContext
-                .Restaurants
-                .Include(r => r.Dishes)
-                .FirstOrDefault(r => r.Id == restaurantId);
-
-            if (restaurant == null)
-                throw new NotFoundException("Restaurant not found");
+            var restaurant = GetRestaurantById(restaurantId);
 
             var dish = restaurant.Dishes.FirstOrDefault(d => d.Id == dishId);
 
@@ -64,6 +60,32 @@ namespace RestaurantAPI.Services
 
         public IEnumerable<DishDTO> GetAllDishes(int restaurantId)
         {
+            var restaurant = GetRestaurantById(restaurantId);
+
+            return _autoMapper.Map<List<DishDTO>>(restaurant.Dishes);
+        }
+
+        public void DeleteAll(int restaurantId)
+        {
+            var restaurant = GetRestaurantById(restaurantId);
+
+            _dbContext.Dishes.RemoveRange(restaurant.Dishes);
+            _dbContext.SaveChanges();
+        }
+
+        public void DeleteDishById(int restaurantId, int dishId)
+        {
+            var restaurant = GetRestaurantById(restaurantId);
+            var dish = restaurant.Dishes.FirstOrDefault(d => d.Id == dishId);
+            if (dish is null)
+                throw new NotFoundException("Dish not found");
+
+            _dbContext.Dishes.Remove(dish);
+            _dbContext.SaveChanges();
+        }
+
+        private Restaurant GetRestaurantById(int restaurantId)
+        {
             var restaurant = _dbContext
                .Restaurants
                .Include(r => r.Dishes)
@@ -72,7 +94,7 @@ namespace RestaurantAPI.Services
             if (restaurant == null)
                 throw new NotFoundException("Restaurant not found");
 
-            return _autoMapper.Map<List<DishDTO>>(restaurant.Dishes);
-        }
+            return restaurant;
+        }        
     }
 }
