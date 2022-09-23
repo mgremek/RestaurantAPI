@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using RestaurantAPI.Entities;
 using RestaurantAPI.Exceptions;
 using RestaurantAPI.Models;
@@ -12,6 +13,9 @@ namespace RestaurantAPI.Services
     public interface IDishService
     {
         int CreateDish(CreateDishDTO dishDTO, int restaurantId);
+        DishDTO GetDish(int restaurantId, int dishId);
+
+        IEnumerable<DishDTO> GetAllDishes(int restaurantId);
     }
 
     public class DishService : IDishService
@@ -38,6 +42,37 @@ namespace RestaurantAPI.Services
             _dbContext.SaveChanges();
 
             return dish.Id;
+        }
+
+        public DishDTO GetDish(int restaurantId, int dishId)
+        {
+            var restaurant = _dbContext
+                .Restaurants
+                .Include(r => r.Dishes)
+                .FirstOrDefault(r => r.Id == restaurantId);
+
+            if (restaurant == null)
+                throw new NotFoundException("Restaurant not found");
+
+            var dish = restaurant.Dishes.FirstOrDefault(d => d.Id == dishId);
+
+            if (dish == null)
+                throw new NotFoundException("Dish not found");
+
+            return _autoMapper.Map<DishDTO>(dish);
+        }
+
+        public IEnumerable<DishDTO> GetAllDishes(int restaurantId)
+        {
+            var restaurant = _dbContext
+               .Restaurants
+               .Include(r => r.Dishes)
+               .FirstOrDefault(r => r.Id == restaurantId);
+
+            if (restaurant == null)
+                throw new NotFoundException("Restaurant not found");
+
+            return _autoMapper.Map<List<DishDTO>>(restaurant.Dishes);
         }
     }
 }

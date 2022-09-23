@@ -18,8 +18,23 @@ namespace RestaurantAPI.Controllers
         {
             _dishService = dishService;
         }
+
         [HttpPost]
         public ActionResult CreateDish([FromRoute] int restaurantId, [FromBody] CreateDishDTO dish) 
             => Created($"api/{restaurantId}/dish/{_dishService.CreateDish(dish, restaurantId)}", null);
+
+        [HttpGet("{dishId}")]
+        public ActionResult<DishDTO> GetDishById([FromRoute] int restaurantId, [FromRoute] int dishId)
+        {
+            DishDTO dish =_dishService.GetDish(restaurantId, dishId);
+            return Ok(dish);
+        }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<DishDTO>> GetAllDishes([FromRoute] int restaurantId)
+        {
+            IEnumerable<DishDTO> dishes = _dishService.GetAllDishes(restaurantId);
+            return Ok(dishes);
+        }
     }
 }

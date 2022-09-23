@@ -91,7 +91,6 @@ namespace RestaurantAPI.Services
             res.HasDelivery = dto.HasDelivery;
 
             _dbContext.SaveChanges();
-
         }
     }
 }

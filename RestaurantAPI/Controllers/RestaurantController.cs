@@ -26,7 +26,6 @@ namespace RestaurantAPI.Controllers
         public ActionResult DeleteRestaurant([FromRoute]int restaurantId)
         {
             _restaurantService.Delete(restaurantId);
-            
             return NoContent();
         }
 
@@ -34,9 +33,9 @@ namespace RestaurantAPI.Controllers
         public ActionResult ModifyRestaurant([FromRoute] int restaurantId, [FromBody] CreateRestaurantDTO dto)
         {
             _restaurantService.Modify(restaurantId, dto);
-
             return Ok();        
         }
+
         [HttpPost]
         public ActionResult CreateRestaurant([FromBody] CreateRestaurantDTO dto)
             => Created($"/api/restaurant/{_restaurantService.CreateNew(dto)}", null);
@@ -48,7 +47,6 @@ namespace RestaurantAPI.Controllers
         public ActionResult<Restaurant> GetRestaurantById([FromRoute]int restaurantId)
         {
             var restaurant =_restaurantService.GetById(restaurantId);
-
             return Ok(restaurant);
         }   
     }
