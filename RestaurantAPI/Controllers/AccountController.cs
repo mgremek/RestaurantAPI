@@ -22,7 +22,6 @@ namespace RestaurantAPI.Controllers
         {
             _accountService.RegisterUser(registerUserDTO);
             return Ok();
-
         }
     }
 }
