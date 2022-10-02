@@ -57,6 +57,10 @@ namespace RestaurantAPI
                 };
             });
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality", "German"));
+            });
             services.AddControllers().AddFluentValidation();
             services.AddDbContext<RestaurantDbContext>();
             services.AddScoped<RestaurantSeeder>();
