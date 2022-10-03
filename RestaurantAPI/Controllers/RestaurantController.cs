@@ -44,7 +44,7 @@ namespace RestaurantAPI.Controllers
             => Created($"/api/restaurant/{_restaurantService.CreateNew(dto)}", null);
  
         [HttpGet]
-        [Authorize(Policy ="HasNationality")]
+        [Authorize(Policy ="Atleast20")]
         public ActionResult<IEnumerable<Restaurant>> GetAllRestaurants() => Ok(_restaurantService.GetAll());
 
         [HttpGet("{restaurantId}")]
