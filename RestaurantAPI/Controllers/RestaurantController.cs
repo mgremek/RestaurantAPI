@@ -14,6 +14,7 @@ namespace RestaurantAPI.Controllers
 {
     [Route("api/restaurant")]
     [ApiController]
+    [Authorize]
     public class RestaurantController : ControllerBase
     { 
         private readonly IRestaurantService _restaurantService;
@@ -38,6 +39,7 @@ namespace RestaurantAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager")]
         public ActionResult CreateRestaurant([FromBody] CreateRestaurantDTO dto)
             => Created($"/api/restaurant/{_restaurantService.CreateNew(dto)}", null);
  
