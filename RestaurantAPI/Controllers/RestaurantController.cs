@@ -49,7 +49,7 @@ namespace RestaurantAPI.Controllers
  
         [HttpGet]
         [Authorize(Policy = "AtLeast2rest")]
-        public ActionResult<IEnumerable<Restaurant>> GetAllRestaurants() => Ok(_restaurantService.GetAll());
+        public ActionResult<IEnumerable<Restaurant>> GetAllRestaurants([FromQuery] string searchPhase) => Ok(_restaurantService.GetAll(searchPhase));
 
         [HttpGet("{restaurantId}")]
         public ActionResult<Restaurant> GetRestaurantById([FromRoute]int restaurantId)

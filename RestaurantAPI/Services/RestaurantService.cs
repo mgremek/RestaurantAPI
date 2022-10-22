@@ -17,7 +17,7 @@ namespace RestaurantAPI.Services
     public interface IRestaurantService
     {
         public RestaurantDTO GetById(int id);
-        public IEnumerable<RestaurantDTO> GetAll();
+        public IEnumerable<RestaurantDTO> GetAll(string searchPhase);
         public int CreateNew(CreateRestaurantDTO createRest);
         void Delete(int id);
         void Modify(int id, CreateRestaurantDTO dto);
@@ -55,13 +55,15 @@ namespace RestaurantAPI.Services
                 return _mapper.Map<RestaurantDTO>(restaurant);
         }
 
-        public IEnumerable<RestaurantDTO> GetAll()
+        public IEnumerable<RestaurantDTO> GetAll(string searchPhase)
         {
             return _mapper.Map<List<RestaurantDTO>>(
                 _dbContext
                 .Restaurants
                 .Include(r => r.Address)
                 .Include(r => r.Dishes)
+                .Where(r=> searchPhase == null || (r.Name.ToLower().Contains(searchPhase.ToLower()) 
+                                                  || r.Description.ToLower().Contains(searchPhase.ToLower())))
                 .ToList());
         }
         public int CreateNew(CreateRestaurantDTO createRest)
