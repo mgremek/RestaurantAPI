@@ -48,7 +48,7 @@ namespace RestaurantAPI.Controllers
         }
  
         [HttpGet]
-        [Authorize(Policy ="Atleast20")]
+        [Authorize(Policy = "AtLeast2rest")]
         public ActionResult<IEnumerable<Restaurant>> GetAllRestaurants() => Ok(_restaurantService.GetAll());
 
         [HttpGet("{restaurantId}")]

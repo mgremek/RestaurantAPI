@@ -26,6 +26,7 @@ namespace RestaurantAPI.Middleware
             catch(ForbidException fe)
             {
                 context.Response.StatusCode = 403;
+                await context.Response.WriteAsync(fe.Message);
             }
             catch(BadRequestException bre)
             {
