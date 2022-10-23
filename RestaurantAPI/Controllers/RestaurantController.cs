@@ -46,10 +46,10 @@ namespace RestaurantAPI.Controllers
             var userId = int.Parse(User.FindFirst(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
             return Created($"/api/restaurant/{_restaurantService.CreateNew(dto)}", null); 
         }
- 
+
         [HttpGet]
         [Authorize(Policy = "AtLeast2rest")]
-        public ActionResult<IEnumerable<Restaurant>> GetAllRestaurants([FromQuery] string searchPhase) => Ok(_restaurantService.GetAll(searchPhase));
+        public ActionResult<IEnumerable<Restaurant>> GetAllRestaurants([FromQuery]RestaurantQuery query) => Ok(_restaurantService.GetAll(query));
 
         [HttpGet("{restaurantId}")]
         public ActionResult<Restaurant> GetRestaurantById([FromRoute]int restaurantId)
