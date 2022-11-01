@@ -9,6 +9,7 @@ using RestaurantAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -57,19 +58,35 @@ namespace RestaurantAPI.Services
 
         public PagedResult<RestaurantDTO> GetAll(RestaurantQuery query)
         {
-            var restaurants = _mapper.Map<List<RestaurantDTO>>(
-                _dbContext
+            var restaurantsQuery = _dbContext
                 .Restaurants
                 .Include(r => r.Address)
                 .Include(r => r.Dishes)
                 .Where(r => query.SearchPhase == null || (r.Name.ToLower().Contains(query.SearchPhase.ToLower())
-                                                  || r.Description.ToLower().Contains(query.SearchPhase.ToLower()))));
-            var pagedRestaurants = restaurants
+                                                  || r.Description.ToLower().Contains(query.SearchPhase.ToLower())));
+
+            if(!string.IsNullOrEmpty(query.SortBy))
+            {
+                var columnsSelector = new Dictionary<string, Expression<Func<Restaurant, object>>>
+                {
+                    { nameof(Restaurant.Name), r => r.Name },
+                    { nameof(Restaurant.Description), r => r.Description },
+                    { nameof(Restaurant.Category), r => r.Category }
+                };
+
+                restaurantsQuery = query.SortDirection == SortDirection.ASC
+                   ? restaurantsQuery.OrderBy(columnsSelector[query.SortBy])
+                    : restaurantsQuery.OrderByDescending(r => r.Name);
+            }
+
+            var pagedRestaurantsQuery = restaurantsQuery
                 .Skip(query.PageSize * (query.PageNumber - 1))
                 .Take(query.PageSize)
                 .ToList();
 
-            return new PagedResult<RestaurantDTO>(pagedRestaurants, restaurants.Count, query.PageSize, query.PageNumber);
+            var result = _mapper.Map<List<RestaurantDTO>>(pagedRestaurantsQuery);
+
+            return new PagedResult<RestaurantDTO>(result, result.Count, query.PageSize, query.PageNumber);
         }
         public int CreateNew(CreateRestaurantDTO createRest)
         {
