@@ -24,7 +24,7 @@ namespace RestaurantAPI.Models.Validators
                 {
                     var email = dbContext.Users.Any(u => u.Email.Equals(value));
                     if (email)
-                        context.AddFailure("Email", "That email is in use already");
+                        context.AddFailure("Email", "That email is already in use.");
                 });
         }
     }
