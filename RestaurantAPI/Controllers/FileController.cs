@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace RestaurantAPI.Controllers
 {
     [Route("file")]
-    //[Authorize]
+    [Authorize]
     public class FileController : ControllerBase
     {
         public ActionResult GetFile([FromQuery]string fileName)
