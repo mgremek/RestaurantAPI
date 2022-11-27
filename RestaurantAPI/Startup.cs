@@ -41,7 +41,7 @@ namespace RestaurantAPI
         {
             var authenticationSettings = new AuthenticationSettings();
 
-            Configuration.GetSection("Authentication").Bind(authenticationSettings);
+            Configuration.GetSection("Authentication").Bind(authenticationSettings)
             services.AddSingleton(authenticationSettings);
 
             services.AddAuthentication(option =>
@@ -87,7 +87,7 @@ namespace RestaurantAPI
             services.AddHttpContextAccessor();
             services.AddSwaggerGen();
 
-            //dodanie polityki CORS, ¿eby przyjmowa³a ¿¹dania od apki frontendowej na porcie http
+            //dodanie polityki CORS, ï¿½eby przyjmowaï¿½a ï¿½ï¿½dania od apki frontendowej na porcie http
             services.AddCors(options =>
             {
                 string allowedOrigin = Configuration.GetSection("AllowedOrigins").Value;
