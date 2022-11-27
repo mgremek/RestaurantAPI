@@ -1,13 +1,10 @@
-name: CI
+name: deploy
 on:
    push:
     branches: [ master ]
-   pull_request:
-    branches: [ master ]
-   workflow_dispatch:
    
 jobs:
-  builds:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
