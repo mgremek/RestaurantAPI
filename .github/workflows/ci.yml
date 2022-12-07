@@ -1,7 +1,9 @@
 name: deploy
 on:
-   push:
-    branches: [ master ]
+   pull_request:
+    branches: 
+      - master-pipeline
+   workflow_dispatch:
    
 jobs:
   build:
