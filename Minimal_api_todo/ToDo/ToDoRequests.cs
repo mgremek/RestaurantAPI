@@ -1,6 +1,14 @@
 ﻿namespace ToDo.MinimalApi;
-public class ToDoRequests
+public static class ToDoRequests
 {
+    public static WebApplication RegisterEndpoints(this WebApplication app)
+    {
+        app.MapGet("/todos", ToDoRequests.GetAll);
+        app.MapGet("/todos/{id}", ToDoRequests.GetById);
+        app.MapPost("/todos", ToDoRequests.Create);
+        app.MapPut("/todos/{id}", ToDoRequests.Update);
+        app.MapDelete("/todos/{id}", ToDoRequests.Delete);
+    }
     public static IResult GetAll(IToDoService toDoService)
     {
          var todos = toDoService.GetAll();
