@@ -20,6 +20,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.RegisterEndpoints(app);
+app.RegisterEndpoints();
 
 app.Run();

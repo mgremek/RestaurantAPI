@@ -3,11 +3,35 @@ public static class ToDoRequests
 {
     public static WebApplication RegisterEndpoints(this WebApplication app)
     {
-        app.MapGet("/todos", ToDoRequests.GetAll);
-        app.MapGet("/todos/{id}", ToDoRequests.GetById);
-        app.MapPost("/todos", ToDoRequests.Create);
-        app.MapPut("/todos/{id}", ToDoRequests.Update);
-        app.MapDelete("/todos/{id}", ToDoRequests.Delete);
+        app.MapGet("/todos", ToDoRequests.GetAll)
+            .Produces<List<ToDoModel>>()
+            .WithTags("To dos");
+
+        app.MapGet("/todos/{id}", ToDoRequests.GetById)
+            .Produces<ToDoModel>()
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status200OK)
+            .WithTags("To dos");
+
+        app.MapPost("/todos", ToDoRequests.Create)
+            .Produces<ToDoModel>()
+            .Accepts<ToDoModel>("application/json")
+            .Produces(StatusCodes.Status201Created)
+            .WithTags("To dos");
+
+        app.MapPut("/todos/{id}", ToDoRequests.Update)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound)
+            .Accepts<ToDoModel>("application/json")
+            .WithTags("To dos")
+
+        app.MapDelete("/todos/{id}", ToDoRequests.Delete)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound)
+            .WithTags("To dos")
+            .ExcludeFromDescription();
+
+        return app;
     }
     public static IResult GetAll(IToDoService toDoService)
     {
