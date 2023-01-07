@@ -1,4 +1,7 @@
-﻿namespace ToDo.MinimalApi;
+﻿using FluentValidation;
+using System.ComponentModel.DataAnnotations;
+
+namespace ToDo.MinimalApi;
 public static class ToDoRequests
 {
     public static WebApplication RegisterEndpoints(this WebApplication app)
@@ -23,7 +26,7 @@ public static class ToDoRequests
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status404NotFound)
             .Accepts<ToDoModel>("application/json")
-            .WithTags("To dos")
+            .WithTags("To dos");
 
         app.MapDelete("/todos/{id}", ToDoRequests.Delete)
             .Produces(StatusCodes.Status204NoContent)
@@ -49,14 +52,22 @@ public static class ToDoRequests
         return Results.Ok(todo);  
     }
 
-    public static IResult Create(IToDoService service, ToDoModel todo)
+    public static IResult Create(IToDoService service, ToDoModel todo, IValidator<ToDoModel> validator)
     {
+        var validationRes = validator.Validate(todo);
+        if (!validationRes.IsValid)
+            return Results.BadRequest(validationRes.Errors);
+
         service.Create(todo);
         return Results.Created($"/todos/{todo.Id}", todo);
     }
 
-    public static IResult Update(IToDoService service, Guid id, ToDoModel todo)
+    public static IResult Update(IToDoService service, Guid id, ToDoModel todo, IValidator<ToDoModel> validator)
     {
+        var validationRes = validator.Validate(todo);
+        if (!validationRes.IsValid)
+            return Results.BadRequest(validationRes.Errors);
+
         if (service.GetById(id) is null)
             return Results.NotFound(todo);
 
