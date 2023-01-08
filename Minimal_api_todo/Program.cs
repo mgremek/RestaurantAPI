@@ -66,7 +66,14 @@ app.MapGet("/token", () =>
     );
 
     var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+
     return jwtToken;
+});
+
+app.MapGet("/hello", (ClaimsPrincipal user) =>
+{
+    var username = user.Identity.Name;
+    return $"Hello {username}";
 });
 
 app.Run();
