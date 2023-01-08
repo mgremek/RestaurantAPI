@@ -33,6 +33,7 @@ namespace ToDo.MinimalApi
                     }
 
                     httpContext.Request.Body.Position = 0;
+
                     await originalDelegate(httpContext);
                 };
             });

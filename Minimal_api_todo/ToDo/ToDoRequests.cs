@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 
 namespace ToDo.MinimalApi;
@@ -8,7 +9,8 @@ public static class ToDoRequests
     {
         app.MapGet("/todos", ToDoRequests.GetAll)
             .Produces<List<ToDoModel>>()
-            .WithTags("To dos");
+            .WithTags("To dos")
+            .RequireAuthorization();
 
         app.MapGet("/todos/{id}", ToDoRequests.GetById)
             .Produces<ToDoModel>()
@@ -55,6 +57,7 @@ public static class ToDoRequests
         return Results.Ok(todo);  
     }
 
+    [Authorize]
     public static IResult Create(IToDoService service, ToDoModel todo)
     {
         service.Create(todo);
