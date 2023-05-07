@@ -17,7 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-var builder = WebApplication.CreateBuilder();
+var builder = WebApplication.CreateBuilder(args);
 
 // NLog: Setup NLog for Dependency injection
 builder.Logging.ClearProviders();
@@ -127,3 +127,7 @@ app.UseEndpoints(endpoints =>
 });
 
 app.Run();
+
+// Making Program visible to WebApplicationFactory<T> and for shared context between tests
+public partial class Program
+{ }
