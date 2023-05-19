@@ -49,6 +49,7 @@ namespace RestaurantAPI.Controllers
 
         [HttpGet]
         //[Authorize(Policy = "AtLeast2rest")]
+        [AllowAnonymous]
         public ActionResult<IEnumerable<Restaurant>> GetAllRestaurants([FromQuery]RestaurantQuery query) => Ok(_restaurantService.GetAll(query));
 
         [HttpGet("{restaurantId}")]
