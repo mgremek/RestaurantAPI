@@ -31,6 +31,7 @@ namespace RestaurantApi.IntegrationTests
 
                         services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
 
+                        services.AddMvc(options => options.Filters.Add(new FakeUserFilter()));
 
                         services.AddDbContext<RestaurantDbContext>(options => options.UseInMemoryDatabase("ResturantDb"));
                     });
