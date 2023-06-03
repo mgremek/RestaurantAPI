@@ -57,32 +57,6 @@ namespace RestaurantApi.IntegrationTests
                 .CreateClient();
         }
 
-
-        //[Fact]
-        //public async Task CreateRestaurant_WithValidModel_ReturnsCreatedStatus()
-        //{
-        //    var model = new CreateRestaurantDTO() { Name = "Test", City = "Warszawa", Street= "Testowa 5" };
-
-        //    var httpContent = new StringContent(JsonConvert.SerializeObject(model), UnicodeEncoding.UTF8, "application/json");
-
-        //    var resp = await _client.PostAsync("/api/restaurant", httpContent);
-
-        //    resp.StatusCode.Should().Be(HttpStatusCode.Created);
-        //    resp.Headers.Location.Should().NotBeNull();
-        //}
-
-        //[Fact]
-        //public async Task CreateRestaurant_WithInvalidModel_ReturnsBadRequest()
-        //{
-        //    var model = new CreateRestaurantDTO { Name = "Test", City = "Warszawa" };
-
-        //    var httpContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-
-        //    var resp = await _client.PostAsync("/api/restaurant", httpContent);
-
-        //    resp.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        //}
-
         [Theory]
         [MemberData(nameof(GetTestData))]
         public async Task CreateRestaurant_WithGivenModel_ReturnsStatusRequest(TestData testData)
