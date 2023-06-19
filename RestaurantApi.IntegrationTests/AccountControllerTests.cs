@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using RestaurantAPI;
 using RestaurantAPI.Entities;
+using RestaurantAPI.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,7 @@ namespace RestaurantApi.IntegrationTests
     {
         private readonly HttpClient _client;
         private readonly WebApplicationFactory<Program> _factory;
+        private Mock<IAccountService> _accServiceMock = new Mock<IAccountService>();
 
         public AccountControllerTests(WebApplicationFactory<Program> factory)
         {
@@ -31,6 +34,8 @@ namespace RestaurantApi.IntegrationTests
                             .SingleOrDefault(service => service.ServiceType == typeof(DbContextOptions<RestaurantDbContext>));
 
                         services.Remove(dbContextOptions);
+
+                        services.AddSingleton<IAccountService>(_accServiceMock.Object); 
 
                         services.AddDbContext<RestaurantDbContext>(options => options.UseInMemoryDatabase("ResturantDb"));
                     });
@@ -72,6 +77,28 @@ namespace RestaurantApi.IntegrationTests
             var res = await _client.PostAsync("/api/account/register", httpContent);
 
             res.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        }
+
+
+        [Fact]
+        public async Task Login_ForRegisteredUser_ReturnOk()
+        {
+            _accServiceMock
+                .Setup(e => e.GenerateJwt(It.IsAny<LoginDto>()))
+                .Returns("jwt");
+
+            var loginDto = new LoginDto()
+            {
+                Email = "test@test.com",
+                Password = "password123"
+            };
+
+            var httpContent = new StringContent(JsonSerializer.Serialize(loginDto), Encoding.UTF8, "application/json");
+
+            var resp = await _client.PostAsync("/api/account/login", httpContent);
+
+            resp.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+
         }
     }
 }
