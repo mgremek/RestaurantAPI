@@ -76,7 +76,6 @@ namespace RestaurantApi.IntegrationTests
         [InlineData("pageSize=10&pageNumber=3")]
         public async Task GetAll_WithQueryParameters_ReturnsOkResult(string query)
         {
-
             var response = await _client.GetAsync($"/api/restaurant?{query}");
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
