@@ -20,7 +20,7 @@ namespace RestaurantAPI.Controllers
     { 
         private readonly IRestaurantService _restaurantService;
 
-        public RestaurantController(RestaurantDbContext restaurantDBContext, IMapper mapper, IRestaurantService restaurantService)
+        public RestaurantController(IRestaurantService restaurantService)
         {
             _restaurantService = restaurantService;
         }
