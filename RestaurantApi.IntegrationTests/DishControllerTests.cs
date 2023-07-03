@@ -3,14 +3,10 @@ using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using RestaurantAPI.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using RestaurantAPI.Models;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-
 namespace RestaurantApi.IntegrationTests
 {
     public class DishControllerTests : IClassFixture<WebApplicationFactory<Program>>
@@ -106,6 +102,62 @@ namespace RestaurantApi.IntegrationTests
 
             dbContext.Restaurants.Add(restaurant);
             dbContext.SaveChanges();
+        }
+
+        [Fact]
+        public async Task DeleteDish_WithValidParameters_ReturnsNoContent()
+        {
+            SeedRestaurant(_restaurant);
+
+            var resp = await _client.DeleteAsync($"api/restaurant/{_restaurant.Id}/dish/{_restaurant.Dishes[0].Id}");
+
+            resp.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+        }
+
+        [Fact]
+        public async Task DeleteDish_WithInvalidParameters_ReturnsnotFound()
+        {
+            SeedRestaurant(_restaurant);
+
+            var resp = await _client.DeleteAsync($"api/restaurant/{_restaurant.Id}/dish/{100}");
+
+            resp.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task DeleteAllDishes_WithValidParameters_ReturnsNoContent()
+        {
+            SeedRestaurant(_restaurant);
+
+            var resp = await _client.DeleteAsync($"api/restaurant/{_restaurant.Id}/dish/all");
+
+            resp.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+        }
+
+        [Fact]
+        public async Task DeleteAllDishes_WithInvalidParameters_ReturnsNoContent()
+        {
+            var resp = await _client.DeleteAsync($"api/restaurant/{-100}/dish/all");
+
+            resp.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        }
+        
+
+        [Fact]
+        public async Task CreateDish_WithInvalidModel_ReturnsNotFound()
+        {
+            var dish = new DishDTO()
+            {
+                Description = "margherita",
+                Name = "Pizza",
+                Price = 36
+            };
+
+            var httpContent = new StringContent(JsonConvert.SerializeObject(dish), Encoding.UTF8, "application/json");
+
+            var resp = await _client.PostAsync($"api/{100}/dish", httpContent);
+
+            resp.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
     }
 }
